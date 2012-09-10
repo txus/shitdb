@@ -19,5 +19,7 @@ typedef struct Object {
 Object *Object_create_integer(int value);
 Object *Object_create_string(bstring value);
 Object *Object_destroy(Object *object);
+bstring Object_to_string(Object *object);
+Object *String_to_object(bstring string);
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <shitdb/dbg.h>
 #include <shitdb/db.h>
+#include <shitdb/object.h>
 
 static inline Object*
 Object_allocate()
@@ -27,5 +28,47 @@ Object_create_string(bstring value)
   Object *obj = Object_allocate();
   obj->type = tString;
   obj->value.as_string = value;
+  return obj;
+}
+
+bstring
+Object_to_string(Object *object)
+{
+  char *str = NULL;
+
+  switch(object->type) {
+    case tInteger: {
+      str = calloc(100, sizeof(char));
+      sprintf(str, "%i", object->value.as_integer);
+      break;
+    }
+    case tString: {
+      int size = blength(object->value.as_string);
+      str = calloc(size, sizeof(char));
+
+      sprintf(str, "\"%s\"", bdata(object->value.as_string));
+      break;
+    }
+    default: {
+      str = calloc(4, sizeof(char));
+      sprintf(str, "nil");
+      break;
+    }
+  }
+
+  return bfromcstr(str);
+}
+
+Object*
+String_to_object(bstring string)
+{
+  Object *obj = NULL;
+
+  if (bchar(string, 0) == '"') {
+    int len = blength(string) - 2;
+    obj = Object_create_string(bmidstr(string, 1, len));
+  } else {
+    obj = Object_create_integer(atoi(bdata(string)));
+  }
   return obj;
 }
