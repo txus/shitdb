@@ -4,6 +4,7 @@
 #include <shitdb/bstrlib.h>
 
 typedef enum {
+  tNil,
   tInteger,
   tString
 } Type;
@@ -16,6 +17,7 @@ typedef struct Object {
   } value;
 } Object;
 
+Object *Object_allocate();
 Object *Object_create_integer(int value);
 Object *Object_create_string(bstring value);
 Object *Object_destroy(Object *object);

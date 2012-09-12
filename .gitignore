@@ -6,4 +6,4 @@ tests/tests.log
 *.DSYM
 callgrind.out*
 cachegrind.out*
-bin/terror
+bin/shitdb

@@ -7,6 +7,6 @@
 int Command_arity(bstring cmd);
 void Server_goodbye();
 void Server_start(DB *db, int port);
-int Server_execute(DB *db, bstring command);
+int Server_execute(DB *db, bstring command, Object *result);
 
 #endif

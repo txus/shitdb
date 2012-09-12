@@ -3,11 +3,12 @@
 #include <shitdb/db.h>
 #include <shitdb/object.h>
 
-static inline Object*
+Object*
 Object_allocate()
 {
   Object *obj = calloc(1, sizeof(Object));
   check_mem(obj);
+  obj->type = tNil;
   return obj;
 error:
   return NULL;
@@ -68,7 +69,12 @@ String_to_object(bstring string)
     int len = blength(string) - 2;
     obj = Object_create_string(bmidstr(string, 1, len));
   } else {
-    obj = Object_create_integer(atoi(bdata(string)));
+    int value = atoi(bdata(string));
+    if (value != 0) {
+      obj = Object_create_integer(atoi(bdata(string)));
+    } else {
+      return NULL;
+    }
   }
   return obj;
 }
