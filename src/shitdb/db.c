@@ -26,3 +26,21 @@ DB_get(DB *db, bstring key)
 {
   return (Object*)Hashmap_get(db->map, key);
 }
+
+/*
+ * Array operations
+ */
+
+void
+DB_apush(DB *db, bstring key, Object *value)
+{
+  Object *array = (Object*)Hashmap_get(db->map, key);
+  DArray_push(array->value.as_array, value);
+}
+
+Object*
+DB_apop(DB *db, bstring key)
+{
+  Object *array = (Object*)Hashmap_get(db->map, key);
+  return (Object*)DArray_pop(array->value.as_array);
+}

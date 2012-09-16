@@ -21,6 +21,23 @@ Example session:
     QUIT
     Bye!
 
+## Basic types
+
+* Integer: 2834
+* String: "yuhuuuu"
+* Array: [42,"foo",9999]
+
+## Instructions
+
+* GET [key]: Returns the content of a key.
+* SET [key] [value]: Sets key to a value of any of the basic types.
+* QUIT: Ends the connection.
+
+### Array instructions
+
+* APUSH [key] [value]: Pushes value to the array located at key.
+* APOP [key]: Pops the array located at key and returns the popped value.
+
 ## Contributing
 
 1. Fork it

@@ -44,6 +44,25 @@ char *test_get()
   return NULL;
 }
 
+char *test_apush()
+{
+  Object *number = Object_create_integer(999);
+  DB_apush(db, bfromcstr("array"), number);
+  return NULL;
+}
+
+char *test_apop()
+{
+  Object *integer = DB_apop(db, bfromcstr("array"));
+  bstring integerstr = Object_to_string(integer);
+
+  mu_assert(bstrcmp(integerstr, bfromcstr("999")) == 0, "Wrong popped value.");
+
+  Object *array = DB_get(db, bfromcstr("array"));
+  mu_assert(DArray_count(array->value.as_array) == 2, "Value was not really popped.");
+  return NULL;
+}
+
 char *test_destroy()
 {
   DB_destroy(db);
@@ -57,6 +76,8 @@ char *all_tests() {
   mu_run_test(test_create);
   mu_run_test(test_set);
   mu_run_test(test_get);
+  mu_run_test(test_apush);
+  mu_run_test(test_apop);
   mu_run_test(test_destroy);
 
   return NULL;

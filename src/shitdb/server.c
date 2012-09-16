@@ -15,6 +15,10 @@ int Command_arity(bstring cmd)
     return 1;
   } else if (bstrcmp(cmd, bfromcstr("SET")) == 0) {
     return 2;
+  } else if (bstrcmp(cmd, bfromcstr("APUSH")) == 0) {
+    return 2;
+  } else if (bstrcmp(cmd, bfromcstr("APOP")) == 0) {
+    return 1;
   } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
     return 0;
   } else {
@@ -46,6 +50,19 @@ int Server_execute(DB *db, bstring command, Object *result)
     check(value, "Invalid value to SET.");
 
     DB_set(db, key, value);
+  } else if (bstrcmp(cmd, bfromcstr("APUSH")) == 0) {
+    bstring key = *ptr;
+    ptr++;
+    Object *value = String_to_object(*ptr);
+    check(value, "Invalid value to APUSH.");
+
+    DB_apush(db, key, value);
+  } else if (bstrcmp(cmd, bfromcstr("APOP")) == 0) {
+    bstring key = *ptr;
+    ptr++;
+
+    Object *ret = DB_apop(db, key);
+    memcpy(result, ret, sizeof(Object));
   } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
     return -1;
   }
