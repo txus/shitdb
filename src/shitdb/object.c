@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <shitdb/dbg.h>
 #include <shitdb/db.h>
 #include <shitdb/object.h>
@@ -32,6 +33,15 @@ Object_create_string(bstring value)
   return obj;
 }
 
+Object*
+Object_create_array(DArray *array)
+{
+  Object *obj = Object_allocate();
+  obj->type = tArray;
+  obj->value.as_array = array;
+  return obj;
+}
+
 bstring
 Object_to_string(Object *object)
 {
@@ -48,6 +58,24 @@ Object_to_string(Object *object)
       str = calloc(size, sizeof(char));
 
       sprintf(str, "\"%s\"", bdata(object->value.as_string));
+      break;
+    }
+    case tArray: {
+      DArray *ary = object->value.as_array;
+      str = calloc(1024, sizeof(char));
+
+      strcat(str, "[");
+
+      int i = 0;
+      int count = DArray_count(ary);
+
+      for(i=0; i < count; i++) {
+        bstring elm = Object_to_string(DArray_get(ary, i));
+        strcat(str, bdata(elm));
+        if(i != count - 1) strcat(str, ", ");
+      }
+
+      strcat(str, "]");
       break;
     }
     default: {
@@ -68,6 +96,22 @@ String_to_object(bstring string)
   if (bchar(string, 0) == '"') {
     int len = blength(string) - 2;
     obj = Object_create_string(bmidstr(string, 1, len));
+  } else if (bchar(string, 0) == '[') {
+    int strlen = blength(string) - 2;
+    bstring inner_str = bmidstr(string, 1, strlen);
+    struct bstrList *elements = bsplit(inner_str, ',');
+
+    int len = elements->qty;
+    int i = 0;
+
+    DArray *array = DArray_create(sizeof(Object*), len);
+    bstring *ptr = elements->entry;
+    for(i = 0; i < len; i++) {
+      btrimws(*ptr);
+      DArray_push(array, String_to_object(*ptr));
+      ptr++;
+    }
+    obj = Object_create_array(array);
   } else {
     int value = atoi(bdata(string));
     if (value != 0) {
