@@ -57,9 +57,14 @@ char *test_apop()
   bstring integerstr = Object_to_string(integer);
 
   mu_assert(bstrcmp(integerstr, bfromcstr("999")) == 0, "Wrong popped value.");
+  return NULL;
+}
 
-  Object *array = DB_get(db, bfromcstr("array"));
-  mu_assert(DArray_count(array->value.as_array) == 2, "Value was not really popped.");
+char *test_acount()
+{
+  Object *count = DB_acount(db, bfromcstr("array"));
+  bstring countstr = Object_to_string(count);
+  mu_assert(bstrcmp(countstr, bfromcstr("2")) == 0, "Wrong array count.");
   return NULL;
 }
 
@@ -78,6 +83,7 @@ char *all_tests() {
   mu_run_test(test_get);
   mu_run_test(test_apush);
   mu_run_test(test_apop);
+  mu_run_test(test_acount);
   mu_run_test(test_destroy);
 
   return NULL;

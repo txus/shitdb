@@ -44,3 +44,12 @@ DB_apop(DB *db, bstring key)
   Object *array = (Object*)Hashmap_get(db->map, key);
   return (Object*)DArray_pop(array->value.as_array);
 }
+
+Object*
+DB_acount(DB *db, bstring key)
+{
+  Object *array = (Object*)Hashmap_get(db->map, key);
+  int count = DArray_count(array->value.as_array);
+  return Object_create_integer(count);
+}
+

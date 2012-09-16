@@ -37,6 +37,7 @@ Example session:
 
 * APUSH [key] [value]: Pushes value to the array located at key.
 * APOP [key]: Pops the array located at key and returns the popped value.
+* ACOUNT [key]: Returns the number of elements in the array.
 
 ## Contributing
 

@@ -17,5 +17,6 @@ Object* DB_get(DB *db, bstring key);
 // Array
 void DB_apush(DB *db, bstring key, Object *value);
 Object* DB_apop(DB *db, bstring key);
+Object* DB_acount(DB *db, bstring key);
 
 #endif
