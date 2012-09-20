@@ -18,5 +18,7 @@ Object* DB_get(DB *db, bstring key);
 void DB_apush(DB *db, bstring key, Object *value);
 Object* DB_apop(DB *db, bstring key);
 Object* DB_acount(DB *db, bstring key);
+void DB_hset(DB *db, bstring key, bstring hkey, Object *value);
+Object* DB_hget(DB *db, bstring key, bstring hkey);
 
 #endif

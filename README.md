@@ -39,6 +39,11 @@ Example session:
 * APOP [key]: Pops the array located at key and returns the popped value.
 * ACOUNT [key]: Returns the number of elements in the array.
 
+### Hash instructions
+
+* HSET [key] [hashkey] [value]: Sets the hashkey in the Hash object in key to a value.
+* HGET [key] [hashkey]: Gets the value of the hashkey in the Hash object in key.
+
 ## Contributing
 
 1. Fork it

@@ -42,6 +42,15 @@ Object_create_array(DArray *array)
   return obj;
 }
 
+Object*
+Object_create_hash(Hashmap *hash)
+{
+  Object *obj = Object_allocate();
+  obj->type = tHash;
+  obj->value.as_hash = hash;
+  return obj;
+}
+
 bstring
 Object_to_string(Object *object)
 {

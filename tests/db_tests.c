@@ -68,6 +68,30 @@ char *test_acount()
   return NULL;
 }
 
+char *test_hset()
+{
+  Object *integer1 = Object_create_integer(999);
+  Object *integer2 = Object_create_integer(1);
+
+  DB_hset(db, bfromcstr("hash"), bfromcstr("foo"), integer1);
+  DB_hset(db, bfromcstr("hash"), bfromcstr("bar"), integer2);
+
+  return NULL;
+}
+
+char *test_hget()
+{
+  Object *integer1 = DB_hget(db, bfromcstr("hash"), bfromcstr("foo"));
+  Object *integer2 = DB_hget(db, bfromcstr("hash"), bfromcstr("bar"));
+  bstring integer1str = Object_to_string(integer1);
+  bstring integer2str = Object_to_string(integer2);
+
+  mu_assert(bstrcmp(integer1str, bfromcstr("999")) == 0, "Wrong hash value on creation");
+  mu_assert(bstrcmp(integer2str, bfromcstr("1")) == 0, "Wrong hash value on update");
+
+  return NULL;
+}
+
 char *test_destroy()
 {
   DB_destroy(db);
@@ -84,6 +108,8 @@ char *all_tests() {
   mu_run_test(test_apush);
   mu_run_test(test_apop);
   mu_run_test(test_acount);
+  mu_run_test(test_hset);
+  mu_run_test(test_hget);
   mu_run_test(test_destroy);
 
   return NULL;

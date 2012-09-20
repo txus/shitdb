@@ -19,6 +19,10 @@ int Command_arity(bstring cmd)
     return 2;
   } else if (bstrcmp(cmd, bfromcstr("APOP")) == 0) {
     return 1;
+  } else if (bstrcmp(cmd, bfromcstr("HSET")) == 0) {
+    return 3;
+  } else if (bstrcmp(cmd, bfromcstr("HGET")) == 0) {
+    return 2;
   } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
     return 0;
   } else {
@@ -62,6 +66,22 @@ int Server_execute(DB *db, bstring command, Object *result)
     ptr++;
 
     Object *ret = DB_apop(db, key);
+    memcpy(result, ret, sizeof(Object));
+  } else if (bstrcmp(cmd, bfromcstr("HSET")) == 0) {
+    bstring key = *ptr;
+    ptr++;
+    bstring hkey = *ptr;
+    ptr++;
+    Object *value = String_to_object(*ptr);
+    check(value, "Invalid value to HSET.");
+
+    DB_hset(db, key, hkey, value);
+  } else if (bstrcmp(cmd, bfromcstr("HGET")) == 0) {
+    bstring key = *ptr;
+    ptr++;
+    bstring hkey = *ptr;
+
+    Object *ret = DB_hget(db, key, hkey);
     memcpy(result, ret, sizeof(Object));
   } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
     return -1;
