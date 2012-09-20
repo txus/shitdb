@@ -46,8 +46,8 @@ char *test_get()
 
 char *test_apush()
 {
-  Object *number = Object_create_integer(999);
-  DB_apush(db, bfromcstr("array"), number);
+  Object *integer = Object_create_integer(999);
+  DB_apush(db, bfromcstr("array"), integer);
   return NULL;
 }
 
@@ -57,6 +57,15 @@ char *test_apop()
   bstring integerstr = Object_to_string(integer);
 
   mu_assert(bstrcmp(integerstr, bfromcstr("999")) == 0, "Wrong popped value.");
+  return NULL;
+}
+
+char *test_aat()
+{
+  Object *integer = DB_aat(db, bfromcstr("array"), 0);
+  bstring integerstr = Object_to_string(integer);
+
+  mu_assert(bstrcmp(integerstr, bfromcstr("42")) == 0, "Wrong value at index.");
   return NULL;
 }
 
@@ -107,6 +116,7 @@ char *all_tests() {
   mu_run_test(test_get);
   mu_run_test(test_apush);
   mu_run_test(test_apop);
+  mu_run_test(test_aat);
   mu_run_test(test_acount);
   mu_run_test(test_hset);
   mu_run_test(test_hget);

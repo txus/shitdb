@@ -47,6 +47,13 @@ DB_apop(DB *db, bstring key)
 }
 
 Object*
+DB_aat(DB *db, bstring key, int index)
+{
+  Object *array = (Object*)Hashmap_get(db->map, key);
+  return (Object*)DArray_at(array->value.as_array, index);
+}
+
+Object*
 DB_acount(DB *db, bstring key)
 {
   Object *array = (Object*)Hashmap_get(db->map, key);
