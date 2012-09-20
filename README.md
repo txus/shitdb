@@ -5,7 +5,7 @@ Shitty key-value store in C inspired by Redis.
 ## Usage
 
     $ make
-    $ bin/shitdb
+    $ bin/shitdb [port]
 
 Example session:
 
