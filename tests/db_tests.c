@@ -47,13 +47,13 @@ char *test_get()
 char *test_apush()
 {
   Object *integer = Object_create_integer(999);
-  DB_apush(db, bfromcstr("array"), integer);
+  DB_apush(db, bfromcstr("newarray"), integer);
   return NULL;
 }
 
 char *test_apop()
 {
-  Object *integer = DB_apop(db, bfromcstr("array"));
+  Object *integer = DB_apop(db, bfromcstr("newarray"));
   bstring integerstr = Object_to_string(integer);
 
   mu_assert(bstrcmp(integerstr, bfromcstr("999")) == 0, "Wrong popped value.");

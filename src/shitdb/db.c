@@ -36,6 +36,12 @@ void
 DB_apush(DB *db, bstring key, Object *value)
 {
   Object *array = (Object*)Hashmap_get(db->map, key);
+
+  if (array == NULL) {
+    array = Object_create_array(DArray_create(sizeof(Object*), 1));
+    Hashmap_set(db->map, key, array);
+  }
+
   DArray_push(array->value.as_array, value);
 }
 
