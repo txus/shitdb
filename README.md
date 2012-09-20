@@ -26,21 +26,22 @@ Example session:
 * Integer: 2834
 * String: "yuhuuuu"
 * Array: [42,"foo",9999]
+* Hashes: (no literal representation)
 
-## Instructions
+## Commands
 
 * GET [key]: Returns the content of a key.
 * SET [key] [value]: Sets key to a value of any of the basic types.
 * QUIT: Ends the connection.
 
-### Array instructions
+### Array commands
 
 * APUSH [key] [value]: Pushes value to the array located at key.
 * APOP [key]: Pops the array located at key and returns the popped value.
 * AAT [key] [index]: Gets the array element at a certain index.
 * ACOUNT [key]: Returns the number of elements in the array.
 
-### Hash instructions
+### Hash commands
 
 * HSET [key] [hashkey] [value]: Sets the hashkey in the Hash object in key to a value.
 * HGET [key] [hashkey]: Gets the value of the hashkey in the Hash object in key.
