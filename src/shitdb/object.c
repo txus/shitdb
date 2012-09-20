@@ -94,7 +94,7 @@ Object_to_string(Object *object)
     }
   }
 
-  return bfromcstr(str);
+  return S(str);
 }
 
 Object*

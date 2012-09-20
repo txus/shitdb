@@ -39,6 +39,11 @@ typedef const struct tagbstring * const_bstring;
 
 /* Copy functions */
 #define cstr2bstr bfromcstr
+
+/* Custom defines */
+#define S(A) bfromcstr(A)
+#define eql(A, B) bstrcmp(A, S(B)) == 0
+
 extern bstring bfromcstr (const char * str);
 extern bstring bfromcstralloc (int mlen, const char * str);
 extern bstring blk2bstr (const void * blk, int len);

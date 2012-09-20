@@ -12,34 +12,34 @@ char *test_create()
 
 char *test_set()
 {
-  Object *str = Object_create_string(bfromcstr("bar"));
+  Object *str = Object_create_string(S("bar"));
   Object *number = Object_create_integer(42);
 
-  Object *array = String_to_object(bfromcstr("[42, \"hey\"]"));
+  Object *array = String_to_object(S("[42, \"hey\"]"));
 
-  DB_set(db, bfromcstr("foo"), str);
-  DB_set(db, bfromcstr("number"), number);
-  DB_set(db, bfromcstr("array"), array);
+  DB_set(db, S("foo"), str);
+  DB_set(db, S("number"), number);
+  DB_set(db, S("array"), array);
 
   return NULL;
 }
 
 char *test_get()
 {
-  Object *bar = DB_get(db, bfromcstr("foo"));
+  Object *bar = DB_get(db, S("foo"));
   bstring barstr = Object_to_string(bar);
 
-  mu_assert(bstrcmp(barstr, bfromcstr("\"bar\"")) == 0, "Strings mismatch");
+  mu_assert(eql(barstr, "\"bar\""), "Strings mismatch");
 
-  Object *number = DB_get(db, bfromcstr("number"));
+  Object *number = DB_get(db, S("number"));
   bstring numberstr = Object_to_string(number);
 
-  mu_assert(bstrcmp(numberstr, bfromcstr("42")) == 0, "Integer mismatch");
+  mu_assert(eql(numberstr, "42"), "Integer mismatch");
 
-  Object *ary = DB_get(db, bfromcstr("array"));
+  Object *ary = DB_get(db, S("array"));
   bstring arystr = Object_to_string(ary);
 
-  mu_assert(bstrcmp(arystr, bfromcstr("[42, \"hey\"]")) == 0, "Array mismatch");
+  mu_assert(eql(arystr, "[42, \"hey\"]"), "Array mismatch");
 
   return NULL;
 }
@@ -47,33 +47,33 @@ char *test_get()
 char *test_apush()
 {
   Object *integer = Object_create_integer(999);
-  DB_apush(db, bfromcstr("newarray"), integer);
+  DB_apush(db, S("newarray"), integer);
   return NULL;
 }
 
 char *test_apop()
 {
-  Object *integer = DB_apop(db, bfromcstr("newarray"));
+  Object *integer = DB_apop(db, S("newarray"));
   bstring integerstr = Object_to_string(integer);
 
-  mu_assert(bstrcmp(integerstr, bfromcstr("999")) == 0, "Wrong popped value.");
+  mu_assert(eql(integerstr, "999"), "Wrong popped value.");
   return NULL;
 }
 
 char *test_aat()
 {
-  Object *integer = DB_aat(db, bfromcstr("array"), 0);
+  Object *integer = DB_aat(db, S("array"), 0);
   bstring integerstr = Object_to_string(integer);
 
-  mu_assert(bstrcmp(integerstr, bfromcstr("42")) == 0, "Wrong value at index.");
+  mu_assert(eql(integerstr, "42"), "Wrong value at index.");
   return NULL;
 }
 
 char *test_acount()
 {
-  Object *count = DB_acount(db, bfromcstr("array"));
+  Object *count = DB_acount(db, S("array"));
   bstring countstr = Object_to_string(count);
-  mu_assert(bstrcmp(countstr, bfromcstr("2")) == 0, "Wrong array count.");
+  mu_assert(eql(countstr, "2"), "Wrong array count.");
   return NULL;
 }
 
@@ -82,21 +82,21 @@ char *test_hset()
   Object *integer1 = Object_create_integer(999);
   Object *integer2 = Object_create_integer(1);
 
-  DB_hset(db, bfromcstr("hash"), bfromcstr("foo"), integer1);
-  DB_hset(db, bfromcstr("hash"), bfromcstr("bar"), integer2);
+  DB_hset(db, S("hash"), bfromcstr("foo"), integer1);
+  DB_hset(db, S("hash"), bfromcstr("bar"), integer2);
 
   return NULL;
 }
 
 char *test_hget()
 {
-  Object *integer1 = DB_hget(db, bfromcstr("hash"), bfromcstr("foo"));
-  Object *integer2 = DB_hget(db, bfromcstr("hash"), bfromcstr("bar"));
+  Object *integer1 = DB_hget(db, S("hash"), bfromcstr("foo"));
+  Object *integer2 = DB_hget(db, S("hash"), bfromcstr("bar"));
   bstring integer1str = Object_to_string(integer1);
   bstring integer2str = Object_to_string(integer2);
 
-  mu_assert(bstrcmp(integer1str, bfromcstr("999")) == 0, "Wrong hash value on creation");
-  mu_assert(bstrcmp(integer2str, bfromcstr("1")) == 0, "Wrong hash value on update");
+  mu_assert(eql(integer1str, "999"), "Wrong hash value on creation");
+  mu_assert(eql(integer2str, "1"), "Wrong hash value on update");
 
   return NULL;
 }

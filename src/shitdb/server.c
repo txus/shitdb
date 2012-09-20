@@ -11,23 +11,23 @@
 
 int Command_arity(bstring cmd)
 {
-  if(bstrcmp(cmd, bfromcstr("GET")) == 0) {
+  if(eql(cmd, "GET")) {
     return 1;
-  } else if (bstrcmp(cmd, bfromcstr("SET")) == 0) {
+  } else if (eql(cmd, "SET")) {
     return 2;
-  } else if (bstrcmp(cmd, bfromcstr("APUSH")) == 0) {
+  } else if (eql(cmd, "APUSH")) {
     return 2;
-  } else if (bstrcmp(cmd, bfromcstr("APOP")) == 0) {
+  } else if (eql(cmd, "APOP")) {
     return 1;
-  } else if (bstrcmp(cmd, bfromcstr("AAT")) == 0) {
+  } else if (eql(cmd, "AAT")) {
     return 2;
-  } else if (bstrcmp(cmd, bfromcstr("ACOUNT")) == 0) {
+  } else if (eql(cmd, "ACOUNT")) {
     return 1;
-  } else if (bstrcmp(cmd, bfromcstr("HSET")) == 0) {
+  } else if (eql(cmd, "HSET")) {
     return 3;
-  } else if (bstrcmp(cmd, bfromcstr("HGET")) == 0) {
+  } else if (eql(cmd, "HGET")) {
     return 2;
-  } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
+  } else if (eql(cmd, "QUIT")) {
     return 0;
   } else {
     return -1;
@@ -48,24 +48,24 @@ int Server_execute(DB *db, bstring command, Object *result)
 
   ptr++;
 
-  if(bstrcmp(cmd, bfromcstr("GET")) == 0) {
+  if(eql(cmd, "GET")) {
     Object *ret = DB_get(db, *ptr);
     memcpy(result, ret, sizeof(Object));
-  } else if (bstrcmp(cmd, bfromcstr("SET")) == 0) {
+  } else if (eql(cmd, "SET")) {
     bstring key = *ptr;
     ptr++;
     Object *value = String_to_object(*ptr);
     check(value, "Invalid value to SET.");
 
     DB_set(db, key, value);
-  } else if (bstrcmp(cmd, bfromcstr("APUSH")) == 0) {
+  } else if (eql(cmd, "APUSH")) {
     bstring key = *ptr;
     ptr++;
     Object *value = String_to_object(*ptr);
     check(value, "Invalid value to APUSH.");
 
     DB_apush(db, key, value);
-  } else if (bstrcmp(cmd, bfromcstr("AAT")) == 0) {
+  } else if (eql(cmd, "AAT")) {
     bstring key = *ptr;
     ptr++;
     int index = atoi(bdata(*ptr));
@@ -73,17 +73,17 @@ int Server_execute(DB *db, bstring command, Object *result)
     Object *ret = DB_aat(db, key, index);
 
     memcpy(result, ret, sizeof(Object));
-  } else if (bstrcmp(cmd, bfromcstr("ACOUNT")) == 0) {
+  } else if (eql(cmd, "ACOUNT")) {
     bstring key = *ptr;
     Object *ret = DB_acount(db, key);
     memcpy(result, ret, sizeof(Object));
-  } else if (bstrcmp(cmd, bfromcstr("APOP")) == 0) {
+  } else if (eql(cmd, "APOP")) {
     bstring key = *ptr;
     ptr++;
 
     Object *ret = DB_apop(db, key);
     memcpy(result, ret, sizeof(Object));
-  } else if (bstrcmp(cmd, bfromcstr("HSET")) == 0) {
+  } else if (eql(cmd, "HSET")) {
     bstring key = *ptr;
     ptr++;
     bstring hkey = *ptr;
@@ -92,14 +92,14 @@ int Server_execute(DB *db, bstring command, Object *result)
     check(value, "Invalid value to HSET.");
 
     DB_hset(db, key, hkey, value);
-  } else if (bstrcmp(cmd, bfromcstr("HGET")) == 0) {
+  } else if (eql(cmd, "HGET")) {
     bstring key = *ptr;
     ptr++;
     bstring hkey = *ptr;
 
     Object *ret = DB_hget(db, key, hkey);
     memcpy(result, ret, sizeof(Object));
-  } else if (bstrcmp(cmd, bfromcstr("QUIT")) == 0) {
+  } else if (eql(cmd, "QUIT")) {
     return -1;
   }
   return 0;
@@ -178,7 +178,7 @@ void Server_start(DB *db, int port)
     char buf[256];
     while((received = recv(accept_fd, buf, 255, 0))) {
       Object *result = Object_allocate();
-      rc = Server_execute(db, chomp(bfromcstr(buf)), result);
+      rc = Server_execute(db, chomp(S(buf)), result);
       if(rc == 0) {
         if (result->type != tNil) {
           bstring ret = Object_to_string(result);
