@@ -201,8 +201,8 @@ void Server_start(DB *db, int port)
       if(rc == 0) {
         if (result->type != tNil) {
           bstring ret = Object_to_string(result);
+          bconchar(ret, '\n');
           send(accept_fd, bdata(ret), blength(ret), 0);
-          send(accept_fd, "\n", 2, 0);
         } else {
           send(accept_fd, "OK\n", 4, 0);
         }
