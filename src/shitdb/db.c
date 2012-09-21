@@ -3,29 +3,40 @@
 #include <shitdb/hashmap.h>
 #include <shitdb/db.h>
 
+static void destroy_object(void *obj)
+{
+  Object_destroy((Object*)obj);
+}
+
+static int destroy_object_node(HashmapNode *node)
+{
+  destroy_object((Object*)node);
+  return 0;
+}
+
 DB*
 DB_create()
 {
   DB *db = calloc(1, sizeof(DB));
   check_mem(db);
 
-  db->map = Hashmap_create(NULL, NULL);
+  db->map = Hashmap_create(NULL, NULL, destroy_object);
   return db;
 
 error:
   return NULL;
 }
 
-static int destroy_all(HashmapNode *node)
-{
-  Object_destroy((Object*)node);
-  return 0;
-}
-
 void
 DB_clear(DB *db)
 {
-  Hashmap_traverse(db->map, destroy_all);
+  Hashmap_traverse(db->map, destroy_object_node);
+}
+
+void
+DB_delete(DB *db, bstring key)
+{
+  Hashmap_delete(db->map, key);
 }
 
 void
@@ -85,7 +96,7 @@ DB_hset(DB *db, bstring key, bstring hkey, Object *value)
   Object *hash = (Object*)Hashmap_get(db->map, key);
 
   if (hash == NULL) {
-    hash = Object_create_hash(Hashmap_create(NULL, NULL));
+    hash = Object_create_hash(Hashmap_create(NULL, NULL, destroy_object));
     Hashmap_set(db->map, key, hash);
   }
 

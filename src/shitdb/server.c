@@ -15,6 +15,8 @@ int Command_arity(bstring cmd)
     return 1;
   } else if (eql(cmd, "SET")) {
     return 2;
+  } else if (eql(cmd, "DELETE")) {
+    return 1;
   } else if (eql(cmd, "APUSH")) {
     return 2;
   } else if (eql(cmd, "APOP")) {
@@ -52,7 +54,11 @@ int Server_execute(DB *db, bstring command, Object *result)
 
   if(eql(cmd, "GET")) {
     Object *ret = DB_get(db, *ptr);
-    memcpy(result, ret, sizeof(Object));
+    if (ret) {
+      memcpy(result, ret, sizeof(Object));
+    } else {
+      return 2;
+    }
   } else if (eql(cmd, "SET")) {
     bstring key = *ptr;
     ptr++;
@@ -60,6 +66,8 @@ int Server_execute(DB *db, bstring command, Object *result)
     check(value, "Invalid value to SET.");
 
     DB_set(db, key, value);
+  } else if (eql(cmd, "DELETE")) {
+    DB_delete(db, *ptr);
   } else if (eql(cmd, "APUSH")) {
     bstring key = *ptr;
     ptr++;
@@ -73,8 +81,11 @@ int Server_execute(DB *db, bstring command, Object *result)
     int index = atoi(bdata(*ptr));
 
     Object *ret = DB_aat(db, key, index);
-
-    memcpy(result, ret, sizeof(Object));
+    if (ret) {
+      memcpy(result, ret, sizeof(Object));
+    } else {
+      return 2;
+    }
   } else if (eql(cmd, "ACOUNT")) {
     bstring key = *ptr;
     Object *ret = DB_acount(db, key);
@@ -84,7 +95,11 @@ int Server_execute(DB *db, bstring command, Object *result)
     ptr++;
 
     Object *ret = DB_apop(db, key);
-    memcpy(result, ret, sizeof(Object));
+    if (ret) {
+      memcpy(result, ret, sizeof(Object));
+    } else {
+      return 2;
+    }
   } else if (eql(cmd, "HSET")) {
     bstring key = *ptr;
     ptr++;
@@ -193,8 +208,10 @@ void Server_start(DB *db, int port)
         }
       } else if (rc == 1) {
         send(accept_fd, "ERROR\n", 7, 0);
+      } else if (rc == 2) {
+        send(accept_fd, "NOTFOUND\n", 10, 0);
       } else if (rc == -1) {
-        send(accept_fd, "Bye!\n", 6, 0);
+        send(accept_fd, "BYE\n", 5, 0);
         // Close the connection
         close(accept_fd);
         goto again;

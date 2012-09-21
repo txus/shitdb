@@ -14,6 +14,11 @@ static int default_compare(void *a, void *b)
   return bstrcmp((bstring)a, (bstring)b);
 }
 
+static void default_destroy(void *node)
+{
+  free(node);
+}
+
 static uint32_t default_hash(void *a)
 {
   size_t len = blength((bstring)a);
@@ -35,13 +40,14 @@ static uint32_t default_hash(void *a)
   return hash;
 }
 
-Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash hash)
+Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash hash, Hashmap_destroy_cb destroy)
 {
   Hashmap *map = calloc(1, sizeof(Hashmap));
   check_mem(map);
 
   map->compare = compare == NULL ? default_compare : compare;
   map->hash = hash == NULL ? default_hash : hash;
+  map->destroy = destroy == NULL ? default_destroy : destroy;
   map->buckets = DArray_create(sizeof(DArray *), DEFAULT_NUMBER_OF_BUCKETS);
   map->buckets->end = map->buckets->max;
   check_mem(map->buckets);
@@ -67,7 +73,7 @@ void Hashmap_destroy(Hashmap *map)
         DArray *bucket = DArray_get(map->buckets, i);
         if(bucket) {
           for(j = 0; j < DArray_count(bucket); j++) {
-            free(DArray_get(bucket, j));
+            map->destroy(DArray_get(bucket, j));
           }
           DArray_destroy(bucket);
         }
@@ -197,7 +203,7 @@ void *Hashmap_delete(Hashmap *map, void *key)
 
   HashmapNode *node = DArray_get(bucket, i);
   void *data = node->data;
-  free(node);
+  map->destroy(node);
 
   HashmapNode *ending = DArray_pop(bucket);
   if(ending != node) {

@@ -32,6 +32,8 @@ Example session:
 
 * GET [key]: Returns the content of a key.
 * SET [key] [value]: Sets key to a value of any of the basic types.
+* DELETE [key]: Deletes a key.
+* CLEAR: Clears all keys.
 * QUIT: Ends the connection.
 
 ### Array commands

@@ -30,6 +30,9 @@ Object_destroy(Object *object)
       }
       break;
     }
+    case tHash: {
+      Hashmap_destroy(object->value.as_hash);
+    }
     default:
       break;
   }
