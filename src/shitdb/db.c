@@ -16,6 +16,18 @@ error:
   return NULL;
 }
 
+static int destroy_all(HashmapNode *node)
+{
+  Object_destroy((Object*)node);
+  return 0;
+}
+
+void
+DB_clear(DB *db)
+{
+  Hashmap_traverse(db->map, destroy_all);
+}
+
 void
 DB_set(DB *db, bstring key, Object *value)
 {

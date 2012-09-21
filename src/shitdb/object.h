@@ -28,7 +28,7 @@ Object *Object_create_integer(int value);
 Object *Object_create_string(bstring value);
 Object *Object_create_array(DArray *array);
 Object *Object_create_hash(Hashmap *hash);
-Object *Object_destroy(Object *object);
+void Object_destroy(Object *object);
 bstring Object_to_string(Object *object);
 Object *String_to_object(bstring string);
 

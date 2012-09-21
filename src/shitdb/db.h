@@ -13,6 +13,7 @@ DB* DB_create();
 #define DB_destroy(db) Hashmap_destroy(db->map); free(db);
 void DB_set(DB *db, bstring key, Object *value);
 Object* DB_get(DB *db, bstring key);
+void DB_clear(DB *db);
 
 // Array
 void DB_apush(DB *db, bstring key, Object *value);

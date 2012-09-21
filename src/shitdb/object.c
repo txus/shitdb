@@ -15,6 +15,28 @@ error:
   return NULL;
 }
 
+void
+Object_destroy(Object *object)
+{
+  switch(object->type) {
+    case tString:
+      bdestroy(object->value.as_string);
+      break;
+    case tArray: {
+      DArray *ary = object->value.as_array;
+      Object *obj = NULL;
+      while((obj = (Object*)DArray_pop(ary)) != NULL) {
+        Object_destroy(obj);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  free(object);
+}
+
 Object*
 Object_create_integer(int value)
 {

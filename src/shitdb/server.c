@@ -27,6 +27,8 @@ int Command_arity(bstring cmd)
     return 3;
   } else if (eql(cmd, "HGET")) {
     return 2;
+  } else if (eql(cmd, "CLEAR")) {
+    return 0;
   } else if (eql(cmd, "QUIT")) {
     return 0;
   } else {
@@ -99,6 +101,8 @@ int Server_execute(DB *db, bstring command, Object *result)
 
     Object *ret = DB_hget(db, key, hkey);
     memcpy(result, ret, sizeof(Object));
+  } else if (eql(cmd, "CLEAR")) {
+    DB_clear(db);
   } else if (eql(cmd, "QUIT")) {
     return -1;
   }
